@@ -4,6 +4,11 @@ ENV LANG=C.UTF-8 LC_ALL=C.UTF-8 PYTHONUNBUFFERED=1
 
 WORKDIR /
 COPY requirements.txt ./
+# mysql requirements
+RUN apk add mariadb-dev
+RUN apk add gcc
+RUN apk add musl-dev
+# App requirements
 RUN pip install --no-cache-dir -r requirements.txt
 RUN rm requirements.txt
 
