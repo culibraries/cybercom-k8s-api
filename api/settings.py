@@ -20,7 +20,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 APPLICATION_TITLE = config.APPLICATION_TITLE
 API_VERSION = '2.0'
 
-#EMAIL
+# EMAIL
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.colorado.edu'
 #EMAIL_HOST = 'smtp.gmail.com'
@@ -30,7 +30,8 @@ EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
 EMAIL_USE_TLS = True
 
 # ADMIN Error Notification by email
-ADMINS=[('Admin','libnotify@colorado.edu')]
+ADMINS = [('Admin', 'libnotify@colorado.edu')]
+
 
 # Session cookies
 # https://docs.djangoproject.com/en/2.2/ref/settings/#session-cookie-domain
