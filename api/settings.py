@@ -16,9 +16,9 @@ import os
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-#Cybercom config settings
+# Cybercom config settings
 APPLICATION_TITLE = config.APPLICATION_TITLE
-API_VERSION='2.0'
+API_VERSION = '2.0'
 
 # Session cookies
 # https://docs.djangoproject.com/en/2.2/ref/settings/#session-cookie-domain
@@ -37,14 +37,22 @@ FORCE_SCRIPT_NAME = '/'
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.getenv('DJANGO_SECRET_KEY','thisIsDevelopmentSecretKeyProductionUseENV')
+SECRET_KEY = os.getenv('DJANGO_SECRET_KEY',
+                       'thisIsDevelopmentSecretKeyProductionUseENV')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['test-libapps.colorado.edu','cubl-load-balancer-103317816.us-west-2.elb.amazonaws.com']
+ALLOWED_HOSTS = ['test-libapps.colorado.edu',
+                 'cubl-load-balancer-103317816.us-west-2.elb.amazonaws.com']
 
-#Logging
+CORS_ORIGIN_WHITELIST = (
+    'libapps.colorado.edu',
+    'test-libapps.colorado.edu',
+    'cubl-load-balancer-103317816.us-west-2.elb.amazonaws.com'
+)
+
+# Logging
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
@@ -76,9 +84,11 @@ INSTALLED_APPS = [
     'data_store',
     'catalog',
     'cybercom_queue',
+    'counter'
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -118,7 +128,7 @@ WSGI_APPLICATION = 'api.wsgi.application'
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
-        #'rest_framework.authentication.BasicAuthentication',
+        # 'rest_framework.authentication.BasicAuthentication',
         'rest_framework_simplejwt.authentication.JWTAuthentication',
         'rest_framework.authentication.TokenAuthentication',
         'rest_framework.authentication.SessionAuthentication',
@@ -129,7 +139,7 @@ REST_FRAMEWORK = {
     'MAX_PAGINATE_BY': 1000000
 }
 
-#Customize JWT 
+# Customize JWT
 SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(minutes=5),
     'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
@@ -155,14 +165,14 @@ SIMPLE_JWT = {
 # Database
 # https://docs.djangoproject.com/en/2.1/ref/settings/#databases
 
-#DATABASES = {
+# DATABASES = {
 #    'default': {
 #        'ENGINE': 'django.db.backends.sqlite3',
 #        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
 #    }
-#}
+# }
 
-#RDS database setup
+# RDS database setup
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
@@ -170,10 +180,17 @@ DATABASES = {
         'HOST': os.getenv('DEFAULT_DB_HOST'),
         'USER': os.getenv('DEFAULT_DB_USER'),
         'PASSWORD': os.getenv('DEFAULT_DB_PASSWORD'),
+    },
+    'counter': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'counter',
+        'HOST': os.getenv('DEFAULT_DB_HOST'),
+        'USER': os.getenv('DEFAULT_DB_USER'),
+        'PASSWORD': os.getenv('DEFAULT_DB_PASSWORD'),
     }
 }
 
-DATABASE_ROUTERS = []
+DATABASE_ROUTERS = ['counter.database_router.counterRouter']
 
 # Password validation
 # https://docs.djangoproject.com/en/2.1/ref/settings/#auth-password-validators
@@ -212,7 +229,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/2.1/howto/static-files/
 
 
-STATIC_URL ='https://cubl-static.s3-us-west-2.amazonaws.com/djangorest/' 
+STATIC_URL = 'https://cubl-static.s3-us-west-2.amazonaws.com/djangorest/'
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, "static"),
 ]

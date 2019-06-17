@@ -1,0 +1,4 @@
+[submodule "counter"]
+	path = counter
+	url = git@github.com:culibraries/counter-django-app.git
+	branch = master
