@@ -1,0 +1,48 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  name: cybercom-mongo
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        io.kompose.service: cybercom-mongo
+    spec:
+      containers:
+      - args:
+        - --sslMode
+        - requireSSL
+        - --sslPEMKeyFile
+        - /ssl/server/mongodb.pem
+        - --sslCAFile
+        - /ssl/testca/cacert.pem
+        - --auth
+        image: mongo
+        name: cybercom-mongo
+        resources: {}
+        volumeMounts:
+        - mountPath: /data/db
+          name: cc-mongo
+        - mountPath: /ssl
+          name: ssl-keys
+      restartPolicy: Always
+      volumes:
+      - name: cc-mongo
+        persistentVolumeClaim:
+          claimName: cc-mongo
+      - name: ssl-keys
+        secret:
+          secretName: cybercom
+          items:
+          - key: SERVER_MONGO_PEM
+            path: server/mongodb.pem
+            mode: 420
+          - key: TESTCA_CACERT_PEM
+            path: testca/cacert.pem
+            mode: 420
+status: {}
