@@ -1,0 +1,117 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  annotations:
+    kompose.cmd: kompose convert
+    kompose.version: 1.18.0 ()
+  creationTimestamp: null
+  labels:
+    io.kompose.service: cybercom-celery
+  name: cybercom-celery
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        io.kompose.service: cybercom-celery
+    spec:
+      containers:
+      - env:
+        - name: BROKER_USE_SSL
+          valueFrom:
+            secretKeyRef:
+              key: BROKER_USE_SSL
+              name: cybercom
+        - name: CELERY_IMPORTS
+          valueFrom:
+            secretKeyRef:
+              key: CELERY_IMPORTS
+              name: cybercom
+        - name: CELERY_QUEUE
+          valueFrom:
+            secretKeyRef:
+              key: CELERY_QUEUE
+              name: cybercom
+        - name: CELERY_SOURCE
+          valueFrom:
+            secretKeyRef:
+              key: CELERY_SOURCE
+              name: cybercom
+        - name: LOG_LEVEL
+          valueFrom:
+            secretKeyRef:
+              key: LOG_LEVEL
+              name: cybercom
+        - name: MONGO_DB
+          valueFrom:
+            secretKeyRef:
+              key: MONGO_DB
+              name: cybercom
+        - name: MONGO_LOG_COLLECTION
+          valueFrom:
+            secretKeyRef:
+              key: MONGO_LOG_COLLECTION
+              name: cybercom
+        - name: MONGO_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: MONGO_PASSWORD
+              name: cybercom
+        - name: MONGO_TOMBSTONE_COLLECTION
+          valueFrom:
+            secretKeyRef:
+              key: MONGO_TOMBSTONE_COLLECTION
+              name: cybercom
+        - name: MONGO_USERNAME
+          valueFrom:
+            secretKeyRef:
+              key: MONGO_USERNAME
+              name: cybercom
+        - name: RABBITMQ_DEFAULT_PASS
+          valueFrom:
+            secretKeyRef:
+              key: RABBITMQ_DEFAULT_PASS
+              name: cybercom
+        - name: RABBITMQ_DEFAULT_USER
+          valueFrom:
+            secretKeyRef:
+              key: RABBITMQ_DEFAULT_USER
+              name: cybercom
+        - name: RABBITMQ_DEFAULT_VHOST
+          valueFrom:
+            secretKeyRef:
+              key: RABBITMQ_DEFAULT_VHOST
+              name: cybercom
+        - name: SSL_PATH
+          valueFrom:
+            secretKeyRef:
+              key: SSL_PATH
+              name: cybercom
+        image: culibraries/celery:0.0.1
+        name: cybercom-celery
+        resources: {}
+        volumeMounts:
+        - mountPath: /ssl
+          name: ssl-keys 
+      restartPolicy: Always
+      volumes:
+      - name: ssl-keys
+        secret:
+          secretName: cybercom
+          items:
+          - key: CLIENT_CERT_PEM
+            path: client/cert.pem
+            mode: 420
+          - key: CLIENT_KEY_PEM
+            path: client/key.pem
+            mode: 420
+          - key: TESTCA_CACERT_PEM
+            path: testca/cacert.pem
+            mode: 420
+          - key: CLIENT_MONGO_PEM
+            path: client/mongodb.pem
+            mode: 420
+status: {}

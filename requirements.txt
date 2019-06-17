@@ -20,3 +20,5 @@ six==1.12.0
 sqlparse==0.3.0
 vine==1.3.0
 gunicorn==19.9.0
+mysql
+django-cors-headers

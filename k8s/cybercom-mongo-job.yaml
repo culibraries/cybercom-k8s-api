@@ -1,0 +1,46 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: cybercom-mongo-job
+spec:
+  template:
+    metadata:
+      creationTimestamp: null
+    spec:
+      containers:
+      - env:
+        - name: MONGO_DB
+          valueFrom:
+            secretKeyRef:
+              key: MONGO_DB
+              name: cybercom
+        - name: MONGO_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: MONGO_PASSWORD
+              name: cybercom
+        - name: MONGO_USERNAME
+          valueFrom:
+            secretKeyRef:
+              key: MONGO_USERNAME
+              name: cybercom
+        image: mongo
+        name: cybercom-mongo-job
+        command: ["/app/addmongouser"]
+        volumeMounts:
+        - mountPath: /data/db
+          name: cc-mongo
+        - mountPath: /app
+          name: add-mongo-script
+      restartPolicy: Never
+      volumes:
+      - name: cc-mongo
+        persistentVolumeClaim:
+          claimName: cc-mongo
+      - name: add-mongo-script
+        secret:
+          secretName: cybercom
+          items:
+          - key: ADD_MONGO_SCRIPT
+            path: addmongouser
+            mode: 448

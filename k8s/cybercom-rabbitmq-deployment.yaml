@@ -1,0 +1,68 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    io.kompose.service: cybercom-rabbitmq
+  name: cybercom-rabbitmq
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        io.kompose.service: cybercom-rabbitmq
+    spec:
+      containers:
+      - env:
+        - name: RABBITMQ_DEFAULT_PASS
+          valueFrom:
+            secretKeyRef:
+              key: RABBITMQ_DEFAULT_PASS
+              name: cybercom
+        - name: RABBITMQ_DEFAULT_USER
+          valueFrom:
+            secretKeyRef:
+              key: RABBITMQ_DEFAULT_USER
+              name: cybercom
+        - name: RABBITMQ_DEFAULT_VHOST
+          valueFrom:
+            secretKeyRef:
+              key: RABBITMQ_DEFAULT_VHOST
+              name: cybercom
+        - name: RABBITMQ_SSL_CACERTFILE
+          value: "/ssl/testca/cacert.pem"
+        - name: RABBITMQ_SSL_CERTFILE
+          value: "/ssl/server/cert.pem"
+        - name: RABBITMQ_SSL_KEYFILE
+          value: "/ssl/server/key.pem"
+        - name: RABBITMQ_SSL_CA_FILE
+          value: "/ssl/testca/cacert.pem"
+        - name: RABBITMQ_SSL_CERT_FILE
+          value: "/ssl/server/cert.pem"
+        - name: RABBITMQ_SSL_KEY_FILE
+          value: "/ssl/server/key.pem"
+        image: rabbitmq:3.6
+        name: cybercom-rabbitmq
+        resources: {}
+        volumeMounts:
+        - mountPath: /ssl
+          name: ssl-keys
+      restartPolicy: Always
+      volumes:
+      - name: ssl-keys
+        secret:
+          secretName: cybercom
+          items:
+          - key: SERVER_CERT_PEM
+            path: server/cert.pem
+            mode: 420
+          - key: SERVER_KEY_PEM
+            path: server/key.pem
+            mode: 420
+          - key: TESTCA_CACERT_PEM
+            path: testca/cacert.pem
+            mode: 420
+status: {}

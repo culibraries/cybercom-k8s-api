@@ -34,13 +34,15 @@ FORCE_SCRIPT_NAME = '/'
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/2.1/howto/deployment/checklist/
 
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'v72(^2ijivo248ebcbqr*455=%#w(^_4@j7(h=nqwt6c+6^nm='
+SECRET_KEY = os.getenv('DJANGO_SECRET_KEY','thisIsDevelopmentSecretKeyProductionUseENV')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['test-libapps.colorado.edu','cubl-load-balancer-103317816.us-west-2.elb.amazonaws.com']
 
 #Logging
 LOGGING = {
@@ -153,10 +155,21 @@ SIMPLE_JWT = {
 # Database
 # https://docs.djangoproject.com/en/2.1/ref/settings/#databases
 
+#DATABASES = {
+#    'default': {
+#        'ENGINE': 'django.db.backends.sqlite3',
+#        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+#    }
+#}
+
+#RDS database setup
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': os.getenv('DEFAULT_DB_NAME'),
+        'HOST': os.getenv('DEFAULT_DB_HOST'),
+        'USER': os.getenv('DEFAULT_DB_USER'),
+        'PASSWORD': os.getenv('DEFAULT_DB_PASSWORD'),
     }
 }
 
@@ -186,7 +199,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'US/Mountain'
 
 USE_I18N = True
 
@@ -198,7 +211,8 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.1/howto/static-files/
 
-STATIC_URL = '/static/'
+
+STATIC_URL ='https://cubl-static.s3-us-west-2.amazonaws.com/djangorest/' 
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, "static"),
 ]

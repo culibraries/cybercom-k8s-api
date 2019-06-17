@@ -1,3 +1,5 @@
+static
+dc_config
 docker_config
 startMongo
 # Byte-compiled / optimized / DLL files
