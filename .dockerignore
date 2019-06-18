@@ -2,6 +2,7 @@ static
 dc_config
 docker_config
 startMongo
+k8s
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]

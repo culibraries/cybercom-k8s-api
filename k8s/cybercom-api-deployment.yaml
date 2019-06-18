@@ -115,6 +115,11 @@ spec:
             secretKeyRef:
               key: EMAIL_HOST_USER
               name: cybercom
+        - name: API_DEBUG
+          valueFrom:
+            secretKeyRef:
+              key: API_DEBUG
+              name: cybercom
         - name: RABBITMQ_SSL_CACERTFILE
           value: "/ssl/testca/cacert.pem"
         - name: RABBITMQ_SSL_CERTFILE
