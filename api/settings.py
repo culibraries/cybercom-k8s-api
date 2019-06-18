@@ -54,7 +54,8 @@ SECRET_KEY = os.getenv('DJANGO_SECRET_KEY',
                        'thisIsDevelopmentSecretKeyProductionUseENV')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+# Default to False unless API_DEBUG is True
+DEBUG = True if os.getenv('API_DEBUG')  == 'True' else False
 
 ALLOWED_HOSTS = ['test-libapps.colorado.edu',
                  'cubl-load-balancer-103317816.us-west-2.elb.amazonaws.com']

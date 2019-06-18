@@ -105,6 +105,16 @@ spec:
             secretKeyRef:
               key: DEFAULT_DB_PASSWORD
               name: cybercom
+        - name: EMAIL_HOST_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: EMAIL_HOST_PASSWORD
+              name: cybercom
+        - name: EMAIL_HOST_USER
+          valueFrom:
+            secretKeyRef:
+              key: EMAIL_HOST_USER
+              name: cybercom
         - name: RABBITMQ_SSL_CACERTFILE
           value: "/ssl/testca/cacert.pem"
         - name: RABBITMQ_SSL_CERTFILE
