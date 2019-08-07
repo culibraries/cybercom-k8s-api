@@ -289,8 +289,8 @@ SAML_PROVIDERS = [{
             # certs/sp.key and certs/sp.crt or you can supply a
             # path via custom_base_path which should contain
             ## sp.crt and sp.key
-            "x509cert": open(os.path.join(BASE_DIR, 'api/certs/sp-cert.pem'), 'r').read(),
-            "privateKey": open(os.path.join(BASE_DIR, 'api/certs/sp-key.pem'), 'r').read()
+            "x509cert": open(os.path.join(BASE_DIR, '/ssl/saml/sp-cert.pem'), 'r').read(),
+            "privateKey": open(os.path.join(BASE_DIR, '/ssl/saml/sp-key.pem'), 'r').read()
         },
         "idp": {
             "entityId": "https://fedauth-test.colorado.edu/idp/shibboleth",
@@ -302,7 +302,7 @@ SAML_PROVIDERS = [{
                 "url": "https://fedauth-test.colorado.edu/idp/profile/SAML2/Redirect/SLO",
                 "binding": "urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect"
             },
-            "x509cert": open(os.path.join(BASE_DIR, 'api/certs/idp-cert.pem'), 'r').read(),
+            "x509cert": open(os.path.join(BASE_DIR, '/ssl/saml/idp-cert.pem'), 'r').read(),
         },
         "organization": {
             "en-US": {
