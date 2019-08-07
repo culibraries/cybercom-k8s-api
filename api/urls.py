@@ -7,6 +7,7 @@ from django.utils.translation import ugettext_lazy as _
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from rest_framework.urlpatterns import format_suffix_patterns
 from .jwt_payload import MyTokenObtainPairView
+import django_saml2_pro_auth.urls as saml_urls
 
 # JWT Authentication
 from rest_framework_simplejwt.views import (
@@ -40,7 +41,9 @@ urlpatterns = [
     path('api/data_store/', include('data_store.urls')),
     path('api/catalog/', include('catalog.urls')),
     path('api/user/', UserProfile.as_view(), name='user-list'),
-    path('api/counter/', include('counter.urls'))
+    path('api/counter/', include('counter.urls')),
+    path('api-auth/login/', include(saml_urls, namespace='saml')),
+
 ]
 
 urlpatterns += staticfiles_urlpatterns()
