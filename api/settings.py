@@ -273,13 +273,13 @@ SAML_PROVIDERS = [{
         "debug": False,
         "custom_base_path": "",
         "sp": {
-            "entityId": "https://test-libapps.colorado.edu/sso/saml/metadata",
+            "entityId": "https://test-libapps.colorado.edu/api/api-saml/sso/saml/metadata",
             "assertionConsumerService": {
-                "url": "https://test-libapps.colorado.edu/sso/saml/?acs",
+                "url": "https://test-libapps.colorado.edu/api/api-saml/sso/saml/?acs",
                 "binding": "urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST"
             },
             "singleLogoutService": {
-                "url": "https://test-libapps.colorado.edu/sso/saml/?sls",
+                "url": "https://test-libapps.colorado.edu/api/api-saml/sso/saml/?sls",
                 "binding": "urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect"
             },
             "NameIDFormat": "urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified",
@@ -306,9 +306,9 @@ SAML_PROVIDERS = [{
         },
         "organization": {
             "en-US": {
-                "name": "University of Colorado - Boulder - Norlin Library",
-                "displayname": "UC Boulder - Norlin Librari",
-                "url": "example.com"
+                "name": "University of Colorado - Boulder - Libraries",
+                "displayname": "UC Boulder - Libraries",
+                "url": "https://www.colorado.edu/libraries/"
             }
         },
         "contact_person": {
