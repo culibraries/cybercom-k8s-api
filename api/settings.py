@@ -55,7 +55,7 @@ SECRET_KEY = os.getenv('DJANGO_SECRET_KEY',
 
 # SECURITY WARNING: don't run with debug turned on in production!
 # Default to False unless API_DEBUG is True
-DEBUG = True if os.getenv('API_DEBUG')  == 'True' else False
+DEBUG = True if os.getenv('API_DEBUG') == 'True' else False
 
 ALLOWED_HOSTS = ['test-libapps.colorado.edu',
                  'cubl-load-balancer-103317816.us-west-2.elb.amazonaws.com']
@@ -247,3 +247,90 @@ STATIC_URL = 'https://cubl-static.s3-us-west-2.amazonaws.com/djangorest/'
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, "static"),
 ]
+
+AUTHENTICATION_BACKENDS = [
+    'django_saml2_pro_auth.auth.Backend'
+]
+
+SAML_ROUTE = 'sso/saml/'
+
+SAML_REDIRECT = '/'
+
+SAML_FAIL_REDIRECT = '/login_failed'
+
+SAML_USERS_MAP = [{
+    "MyProvider": {
+        "email": dict(key="Email", index=0),
+        "name": dict(key="Username", index=0)
+    }
+
+}]
+
+
+SAML_PROVIDERS = [{
+    "MyProvider": {
+        "strict": True,
+        "debug": False,
+        "custom_base_path": "",
+        "sp": {
+            "entityId": "https://test-libapps.colorado.edu/sso/saml/metadata",
+            "assertionConsumerService": {
+                "url": "https://test-libapps.colorado.edu/sso/saml/?acs",
+                "binding": "urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST"
+            },
+            "singleLogoutService": {
+                "url": "https://test-libapps.colorado.edu/sso/saml/?sls",
+                "binding": "urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect"
+            },
+            "NameIDFormat": "urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified",
+            # For the cert/key you can place their content in
+            # the x509cert and privateKey params
+            # as single-line strings or place them in
+            # certs/sp.key and certs/sp.crt or you can supply a
+            # path via custom_base_path which should contain
+            ## sp.crt and sp.key
+            "x509cert": open(os.path.join(BASE_DIR, 'api/certs/sp-cert.pem'), 'r').read(),
+            "privateKey": open(os.path.join(BASE_DIR, 'api/certs/sp-key.pem'), 'r').read()
+        },
+        "idp": {
+            "entityId": "https://fedauth-test.colorado.edu/idp/shibboleth",
+            "singleSignOnService": {
+                "url": "https://fedauth-test.colorado.edu/idp/profile/SAML2/Redirect/SSO",
+                "binding": "urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect"
+            },
+            "singleLogoutService": {
+                "url": "https://fedauth-test.colorado.edu/idp/profile/SAML2/Redirect/SLO",
+                "binding": "urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect"
+            },
+            "x509cert": open(os.path.join(BASE_DIR, 'api/certs/idp-cert.pem'), 'r').read(),
+        },
+        "organization": {
+            "en-US": {
+                "name": "University of Colorado - Boulder - Norlin Library",
+                "displayname": "UC Boulder - Norlin Librari",
+                "url": "example.com"
+            }
+        },
+        "contact_person": {
+            "technical": {
+                "given_name": "LIT UC - Boulder",
+                "email_address": "libnotify@colorado.edu"
+            }
+        },
+        "security": {
+            "nameIdEncrypted": False,
+            "authnRequestsSigned": True,
+            "logoutRequestSigned": False,
+            "logoutResponseSigned": False,
+            "signMetadata": False,
+            "wantMessagesSigned": False,
+            "wantAssertionsSigned": True,
+            "wantNameId": True,
+            "wantNameIdEncrypted": False,
+            "wantAssertionsEncrypted": True,
+            "signatureAlgorithm": "http://www.w3.org/2000/09/xmldsig#rsa-sha1",
+            "digestAlgorithm": "http://www.w3.org/2000/09/xmldsig#rsa-sha1",
+        }
+
+    }
+}]
