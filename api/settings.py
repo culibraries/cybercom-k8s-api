@@ -57,8 +57,11 @@ SECRET_KEY = os.getenv('DJANGO_SECRET_KEY',
 # Default to False unless API_DEBUG is True
 DEBUG = True if os.getenv('API_DEBUG') == 'True' else False
 
-ALLOWED_HOSTS = ['test-libapps.colorado.edu',
-                 'cubl-load-balancer-103317816.us-west-2.elb.amazonaws.com']
+ALLOWED_HOSTS = [
+    'test-libapps.colorado.edu',
+    'cubl-load-balancer-103317816.us-west-2.elb.amazonaws.com',
+    'localhost:4200'
+]
 
 CORS_ORIGIN_WHITELIST = (
     'libapps.colorado.edu',
