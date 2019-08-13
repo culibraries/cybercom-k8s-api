@@ -43,6 +43,7 @@ urlpatterns = [
     path('api/catalog/', include('catalog.urls')),
     path('api/user/', UserProfile.as_view(), name='user-list'),
     path('api/counter/', include('counter.urls')),
+    path('api/s3/', include('s3.urls'))
 
 ]
 

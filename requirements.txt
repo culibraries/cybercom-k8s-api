@@ -23,3 +23,4 @@ gunicorn==19.9.0
 mysql
 django-cors-headers
 django-saml2-pro-auth
+boto3

@@ -2,3 +2,7 @@
 	path = counter
 	url = git@github.com:culibraries/counter-django-app.git
 	branch = master
+[submodule "s3"]
+	path = s3
+	url = git@github.com:culibraries/s3-django-app.git
+	branch = master
