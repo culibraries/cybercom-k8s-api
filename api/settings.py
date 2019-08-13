@@ -60,14 +60,16 @@ DEBUG = True if os.getenv('API_DEBUG') == 'True' else False
 ALLOWED_HOSTS = [
     'test-libapps.colorado.edu',
     'cubl-load-balancer-103317816.us-west-2.elb.amazonaws.com',
-    'localhost:4200'
+    'localhost:4200',
+    'localhost'
 ]
 
 CORS_ORIGIN_WHITELIST = (
     'libapps.colorado.edu',
     'test-libapps.colorado.edu',
     'cubl-load-balancer-103317816.us-west-2.elb.amazonaws.com',
-    'localhost:4200'
+    'localhost:4200',
+    'localhost'
 )
 
 # Logging
