@@ -63,7 +63,7 @@ ALLOWED_HOSTS = ['test-libapps.colorado.edu',
 CORS_ORIGIN_WHITELIST = (
     'libapps.colorado.edu',
     'test-libapps.colorado.edu',
-    'cubl-load-balancer-103317816.us-west-2.elb.amazonaws.com'
+    'cubl-load-balancer-103317816.us-west-2.elb.amazonaws.com',
     'localhost:4200'
 )
 
