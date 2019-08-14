@@ -42,8 +42,8 @@ urlpatterns = [
     path('api/data_store/', include('data_store.urls')),
     path('api/catalog/', include('catalog.urls')),
     path('api/user/', UserProfile.as_view(), name='user-list'),
-    path('api/counter/', include('counter.urls')),
-    path('api/s3/', include('s3.urls'))
+    path('api/counter/', include('counter.urls'), name='counter-list'),
+    path('api/s3/', include('s3.urls'), name='s3-list')
 
 ]
 

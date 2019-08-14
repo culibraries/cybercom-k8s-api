@@ -264,8 +264,9 @@ SAML_FAIL_REDIRECT = '/login_failed'
 
 SAML_USERS_MAP = [{
     "MyProvider": {
-        "email": dict(key="Email", index=0),
-        "name": dict(key="Username", index=0)
+        "UID": dict(key="UID", index=0),
+        "displayName": dict(key="displayName", index=0),
+        "eduPersonPrincipalName": dict(key="eduPersonPrincipalName", index=0)
     }
 
 }]
