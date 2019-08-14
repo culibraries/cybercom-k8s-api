@@ -20,6 +20,11 @@ spec:
     spec:
       containers:
         - env:
+            - name: DJANGO_LOG_LEVEL
+              valueFrom:
+                secretKeyRef:
+                  key: DJANGO_LOG_LEVEL
+                  name: cybercom
             - name: DJANGO_SECRET_KEY
               valueFrom:
                 secretKeyRef:
@@ -132,7 +137,7 @@ spec:
               value: '/ssl/server/cert.pem'
             - name: RABBITMQ_SSL_KEY_FILE
               value: '/ssl/server/key.pem'
-          image: culibraries/api-k8s:0.0.2
+          image: culibraries/api-k8s:0.0.4
           name: cybercom-api
           ports:
             - containerPort: 8080
