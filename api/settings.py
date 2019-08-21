@@ -253,25 +253,26 @@ STATICFILES_DIRS = [
 ]
 
 AUTHENTICATION_BACKENDS = [
-    'django.contrib.auth.backends.ModelBackend',
-    'django_saml2_pro_auth.auth.Backend'
+    'django_saml2_pro_auth.auth.Backend',
+    'django.contrib.auth.backends.ModelBackend'
 ]
 
 SAML_ROUTE = 'sso/saml/'
 
-SAML_REDIRECT = '/'
+SAML_REDIRECT = '/api/'
 
 SAML_FAIL_REDIRECT = '/login_failed'
 
 SAML_USERS_MAP = [{
     "MyProvider": {
-        "username": dict(key="uid", index=0),
+        "username": dict(key="urn:oid:0.9.2342.19200300.100.1.1", index=0),
         # "displayName": dict(key="displayName", index=0),
         # "eduPersonPrincipalName": dict(key="eduPersonPrincipalName", index=0)
     }
 
 }]
 
+SAML_USERS_STRICT_MAPPING = False
 
 SAML_PROVIDERS = [{
     "MyProvider": {

@@ -10,7 +10,8 @@ RUN apk add mariadb-dev \
     musl-dev \
     libxml2-dev \
     libxslt-dev \
-    xmlsec-dev
+    xmlsec-dev \
+    git
 # App requirements
 RUN pip install --no-cache-dir -r requirements.txt
 RUN rm requirements.txt

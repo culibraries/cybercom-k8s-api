@@ -11,6 +11,7 @@ from rest_framework.permissions import IsAuthenticated
 # from .models import AuthtokenToken, AuthUser
 from django.contrib.auth.decorators import login_required
 from hashlib import md5
+
 # from rest_framework import viewsets
 # from rest_framework.permissions import AllowAny
 # from .permissions import IsStaffOrTargetUser
@@ -27,6 +28,12 @@ class APIRoot(APIView):
     permission_classes = (IsAuthenticatedOrReadOnly,)
 
     def get(self, request, format=None):
+        print('debug')
+        try:
+            print(request.session['samlUserdata'])
+        except:
+            print('error')
+
         return Response({
             'Queue': {'Tasks': reverse('queue-main', request=request),
                       'Tasks History': reverse('queue-user-tasks', request=request)},
