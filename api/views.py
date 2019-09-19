@@ -72,14 +72,16 @@ class UserProfile(APIView):
         for g in request.user.groups.all():
             user_groups.append(g.name)
         # Additional groups from grouper
-        grouper=self.deep_get(request.session,'samlUserdata;urn:oid:1.3.6.1.4.1.632.11.2.200') 
-        if grouper:
-            user_groups=list(set(user_groups+grouper))
+        if 'samlUserdata' in  request.session:
+            print(request.session['samlUserdata'])
+            if 'urn:oid:1.3.6.1.4.1.632.11.2.200' in request.session['samlUserdata']:   
+                grouper=request.session['samlUserdata']['urn:oid:1.3.6.1.4.1.632.11.2.200'] 
+                user_groups=list(set(user_groups+grouper))
         rdata = serializer.data
         rdata['name'] = data.get_full_name()
         print(md5(rdata['email'].strip(' \t\n\r').encode('utf-8')).hexdigest())
         rdata['gravator_url'] = "{0}://www.gravatar.com/avatar/{1}".format(
-            request.scheme, md5(rdata['email'].strip(' \t\n\r').encode('utf-8')).hexdigest())
+            request.scheme, md5(rdata['email'].lower().strip(' \t\n\r').encode('utf-8')).hexdigest())
         rdata['groups'] = user_groups
         authscheme = {'auth-token': str(tok[0]),
                       'jwt-auth': {'obtain-token': reverse('token_obtain_pair', request=request),
@@ -118,19 +120,6 @@ class UserProfile(APIView):
                 request.scheme, md5(data['email'].strip(' \t\n\r').encode('utf-8')).hexdigest())
             data['auth-token'] = str(tok[0])
             return Response(data)
-
-        def deep_get(self, _dict, keys, default=None):
-            """
-            Deep get on python dictionary. Key is in dot notation.
-            Returns value if found. Default returned if not found.
-            Default can be set to another deep_get function.
-            """
-            keys=keys.split(';')
-            def _reducer(d, key):
-                if isinstance(d, dict):
-                    return d.get(key, default)
-                return default
-            return reduce(_reducer, keys, _dict)
 
 
 class IsOwnerOrReadOnly(permissions.BasePermission):
