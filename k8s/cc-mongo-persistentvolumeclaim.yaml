@@ -7,10 +7,12 @@ metadata:
   name: cc-mongo
 spec:
   accessModes:
-  - ReadWriteOnce
+    - ReadWriteOnce
   resources:
     requests:
       storage: 10Gi
+  storageClassName: aws-cybercom
   volumeMode: Filesystem
-  volumeName: aws-ebs-cybercom-mongo
+  #add VolumeName cc-mongo-test
+  volumeName: test-cybercom-mongo
 status: {}
