@@ -71,6 +71,10 @@ class UserProfile(APIView):
         user_groups = []
         for g in request.user.groups.all():
             user_groups.append(g.name)
+        # Additional groups from grouper
+        grouper=self.deep_get(request.session,'samlUserdata;urn:oid:1.3.6.1.4.1.632.11.2.200') 
+        if grouper:
+            user_groups=list(set(user_groups+grouper))
         rdata = serializer.data
         rdata['name'] = data.get_full_name()
         print(md5(rdata['email'].strip(' \t\n\r').encode('utf-8')).hexdigest())
@@ -114,6 +118,19 @@ class UserProfile(APIView):
                 request.scheme, md5(data['email'].strip(' \t\n\r').encode('utf-8')).hexdigest())
             data['auth-token'] = str(tok[0])
             return Response(data)
+
+        def deep_get(self, _dict, keys, default=None):
+            """
+            Deep get on python dictionary. Key is in dot notation.
+            Returns value if found. Default returned if not found.
+            Default can be set to another deep_get function.
+            """
+            keys=keys.split(';')
+            def _reducer(d, key):
+                if isinstance(d, dict):
+                    return d.get(key, default)
+                return default
+            return reduce(_reducer, keys, _dict)
 
 
 class IsOwnerOrReadOnly(permissions.BasePermission):
