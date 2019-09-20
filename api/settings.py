@@ -252,6 +252,8 @@ STATICFILES_DIRS = [
     os.path.join(BASE_DIR, "static"),
 ]
 
+LOGIN_URL = "/api/api-saml/sso/saml/"
+
 AUTHENTICATION_BACKENDS = [
     'django_saml2_pro_auth.auth.Backend',
     'django.contrib.auth.backends.ModelBackend'
@@ -273,6 +275,7 @@ SAML_USERS_MAP = [{
 
 }]
 
+SAML_USERS_SYNC_ATTRIBUTES = True
 SAML_USERS_STRICT_MAPPING = False
 
 SAML_PROVIDERS = [{
@@ -328,8 +331,8 @@ SAML_PROVIDERS = [{
         "security": {
             "nameIdEncrypted": False,
             "authnRequestsSigned": True,
-            "logoutRequestSigned": False,
-            "logoutResponseSigned": False,
+            "logoutRequestSigned": True,
+            "logoutResponseSigned": True,
             "signMetadata": False,
             "wantMessagesSigned": False,
             "wantAssertionsSigned": True,

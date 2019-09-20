@@ -12,6 +12,10 @@ from rest_framework.permissions import IsAuthenticated
 from django.contrib.auth.decorators import login_required
 from hashlib import md5
 
+# logout request
+import requests
+from django.contrib.auth import logout
+
 # from rest_framework import viewsets
 # from rest_framework.permissions import AllowAny
 # from .permissions import IsStaffOrTargetUser
@@ -58,6 +62,19 @@ class UserSerializer(serializers.Serializer):
     last_name = serializers.CharField(max_length=50)
 
 
+class samlLogout(APIView):
+
+    def get(self, request, id=None, format=None):
+        """
+        Logout of django and SAML post for CU Boulder Idp logout
+        """
+        requests.post(
+            "https://fedauth-test.colorado.edu/idp/profile/Logout/", data="_eventId=propagate")
+        requests.post(
+            "https://fedauth-test.colorado.edu/idp/profile/SAML2/Redirect/SLO")
+        logout(request)
+
+
 class UserProfile(APIView):
     permission_classes = (IsAuthenticated,)
     serializer_class = UserSerializer
@@ -72,14 +89,17 @@ class UserProfile(APIView):
         for g in request.user.groups.all():
             user_groups.append(g.name)
         # Additional groups from grouper
-        if 'samlUserdata' in  request.session:
-            print(request.session['samlUserdata'])
-            if 'urn:oid:1.3.6.1.4.1.632.11.2.200' in request.session['samlUserdata']:   
-                grouper=request.session['samlUserdata']['urn:oid:1.3.6.1.4.1.632.11.2.200'] 
-                user_groups=list(set(user_groups+grouper))
+        if 'samlUserdata' in request.session:
+            samlUserdata = request.session['samlUserdata']
+            print(samlUserdata)
+            if "urn:oid:1.3.6.1.4.1.632.11.2.200" in samlUserdata:
+                grouper = samlUserdata['urn:oid:1.3.6.1.4.1.632.11.2.200']
+                # print('grouper',grouper)
+                user_groups = list(set(user_groups+grouper))
+        user_groups.sort()
         rdata = serializer.data
         rdata['name'] = data.get_full_name()
-        print(md5(rdata['email'].strip(' \t\n\r').encode('utf-8')).hexdigest())
+        #print(md5(rdata['email'].strip(' \t\n\r').encode('utf-8')).hexdigest())
         rdata['gravator_url'] = "{0}://www.gravatar.com/avatar/{1}".format(
             request.scheme, md5(rdata['email'].lower().strip(' \t\n\r').encode('utf-8')).hexdigest())
         rdata['groups'] = user_groups

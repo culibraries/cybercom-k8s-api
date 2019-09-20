@@ -2,7 +2,7 @@ from django.urls import include, path, re_path
 from rest_framework import routers
 #from tutorial import views
 from django.contrib import admin
-from .views import APIRoot, UserProfile
+from .views import APIRoot, UserProfile, samlLogout
 from django.utils.translation import ugettext_lazy as _
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from rest_framework.urlpatterns import format_suffix_patterns
@@ -30,6 +30,7 @@ urlpatterns = [
     #Authentication and Admin
     path('api/api-auth/',
          include('rest_framework.urls', namespace='rest_framework')),
+    path('api/api-auth/logout/',samlLogout.as_view(),name='user-logout'),
     re_path(r'^api/token/$', MyTokenObtainPairView.as_view(),
             name='token_obtain_pair'),
     re_path(r'^api/token/refresh/$',
