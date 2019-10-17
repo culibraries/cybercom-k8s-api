@@ -30,7 +30,7 @@ urlpatterns = [
     #Authentication and Admin
     path('api/api-auth/',
          include('rest_framework.urls', namespace='rest_framework')),
-    path('api/api-auth/logout/',samlLogout.as_view(),name='user-logout'),
+    path('api/api-auth/logout/', samlLogout.as_view(), name='user-logout'),
     re_path(r'^api/token/$', MyTokenObtainPairView.as_view(),
             name='token_obtain_pair'),
     re_path(r'^api/token/refresh/$',
@@ -44,7 +44,8 @@ urlpatterns = [
     path('api/catalog/', include('catalog.urls')),
     path('api/user/', UserProfile.as_view(), name='user-list'),
     path('api/counter/', include('counter.urls'), name='counter-list'),
-    path('api/s3/', include('s3.urls'), name='s3-list')
+    path('api/s3/', include('s3.urls'), name='s3-list'),
+    path('api/room-booking/', include('room_booking.urls'), name='room-booking-list')
 
 ]
 

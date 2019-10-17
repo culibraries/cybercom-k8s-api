@@ -135,6 +135,16 @@ spec:
                 secretKeyRef:
                   key: LIBCAL_CLIENT_SECRET
                   name: cybercom
+            - name: ROOM_BOOKING_SIERRA_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  key: ROOM_BOOKING_SIERRA_API_KEY
+                  name: cybercom
+            - name: ROOM_BOOKING_SIERRA_CLIENT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  key: ROOM_BOOKING_SIERRA_CLIENT_SECRET
+                  name: cybercom
             - name: RABBITMQ_SSL_CACERTFILE
               value: "/ssl/testca/cacert.pem"
             - name: RABBITMQ_SSL_CERTFILE
