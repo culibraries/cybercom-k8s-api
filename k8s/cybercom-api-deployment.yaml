@@ -125,19 +125,29 @@ spec:
                 secretKeyRef:
                   key: API_DEBUG
                   name: cybercom
+            - name: LIBCAL_CLIENT_ID
+              valueFrom:
+                secretKeyRef:
+                  key: LIBCAL_CLIENT_ID
+                  name: cybercom
+            - name: LIBCAL_CLIENT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  key: LIBCAL_CLIENT_SECRET
+                  name: cybercom
             - name: RABBITMQ_SSL_CACERTFILE
-              value: '/ssl/testca/cacert.pem'
+              value: "/ssl/testca/cacert.pem"
             - name: RABBITMQ_SSL_CERTFILE
-              value: '/ssl/server/cert.pem'
+              value: "/ssl/server/cert.pem"
             - name: RABBITMQ_SSL_KEYFILE
-              value: '/ssl/server/key.pem'
+              value: "/ssl/server/key.pem"
             - name: RABBITMQ_SSL_CA_FILE
-              value: '/ssl/testca/cacert.pem'
+              value: "/ssl/testca/cacert.pem"
             - name: RABBITMQ_SSL_CERT_FILE
-              value: '/ssl/server/cert.pem'
+              value: "/ssl/server/cert.pem"
             - name: RABBITMQ_SSL_KEY_FILE
-              value: '/ssl/server/key.pem'
-          image: culibraries/api-k8s:0.0.4
+              value: "/ssl/server/key.pem"
+          image: culibraries/api-k8s:0.0.5
           name: cybercom-api
           ports:
             - containerPort: 8080
