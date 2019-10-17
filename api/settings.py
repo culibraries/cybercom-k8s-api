@@ -39,6 +39,8 @@ ADMINS = [('Admin', 'libnotify@colorado.edu')]
 SESSION_COOKIE_DOMAIN = None
 CSRF_COOKIE_DOMAIN = None
 
+SESSION_COOKIE_HTTPONLY = False
+
 # If you want to mount API with nginx with location other than /
 # Change to desired url - '/api/'
 FORCE_SCRIPT_NAME = '/'
@@ -147,7 +149,7 @@ WSGI_APPLICATION = 'api.wsgi.application'
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         # 'rest_framework.authentication.BasicAuthentication',
-        'rest_framework_simplejwt.authentication.JWTAuthentication',
+        # 'rest_framework_simplejwt.authentication.JWTAuthentication',
         'rest_framework.authentication.TokenAuthentication',
         'rest_framework.authentication.SessionAuthentication',
     ),
