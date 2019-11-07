@@ -306,13 +306,13 @@ SAML_PROVIDERS = [{
             "privateKey": open(os.path.join(BASE_DIR, '/ssl/saml/sp-key.pem'), 'r').read()
         },
         "idp": {
-            "entityId": "https://fedauth-test.colorado.edu/idp/shibboleth",
+            "entityId": "https://fedauth.colorado.edu/idp/shibboleth",
             "singleSignOnService": {
-                "url": "https://fedauth-test.colorado.edu/idp/profile/SAML2/Redirect/SSO",
+                "url": "https://fedauth.colorado.edu/idp/profile/SAML2/Redirect/SSO",
                 "binding": "urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect"
             },
             "singleLogoutService": {
-                "url": "https://fedauth-test.colorado.edu/idp/profile/SAML2/Redirect/SLO",
+                "url": "https://fedauth.colorado.edu/idp/profile/SAML2/Redirect/SLO",
                 "binding": "urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect"
             },
             "x509cert": open(os.path.join(BASE_DIR, '/ssl/saml/idp-cert.pem'), 'r').read(),
