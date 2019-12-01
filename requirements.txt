@@ -20,8 +20,8 @@ six==1.12.0
 sqlparse==0.3.0
 vine==1.3.0
 gunicorn==19.9.0
-mysql 
+mysql
 django-cors-headers
 git+https://github.com/culibraries/django-saml2-pro-auth.git
-boto3 
+boto3
 requests

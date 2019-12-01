@@ -104,7 +104,7 @@ INSTALLED_APPS = [
     'catalog',
     'cybercom_queue',
     'counter',
-    's3'
+    's3',
 ]
 
 MIDDLEWARE = [
