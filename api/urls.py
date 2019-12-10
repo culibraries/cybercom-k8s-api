@@ -45,7 +45,9 @@ urlpatterns = [
     path('api/user/', UserProfile.as_view(), name='user-list'),
     path('api/counter/', include('counter.urls'), name='counter-list'),
     path('api/s3/', include('s3.urls'), name='s3-list'),
-    path('api/room-booking/', include('room_booking.urls'), name='room-booking-list')
+    path('api/room-booking/', include('room_booking.urls'),
+         name='room-booking-list'),
+    path('api/s3-logging/', include('s3-logging.urls'), name='s3-logging-list')
 
 ]
 

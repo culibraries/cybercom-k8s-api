@@ -9,3 +9,6 @@
 [submodule "room_booking"]
 	path = room_booking
 	url = git@github.com:culibraries/room-booking-django-app.git
+[submodule "s3-logging"]
+	path = s3-logging
+	url = git@github.com:culibraries/s3-logging-django-app.git
