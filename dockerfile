@@ -24,5 +24,4 @@ RUN addgroup api && adduser -DH -G api apiuser
 RUN chown apiuser:api -R /app
 
 EXPOSE 8080
-CMD crond
 CMD ["su", "-p", "apiuser", "-c", "gunicorn --config=gunicorn.py api.wsgi:application"]
