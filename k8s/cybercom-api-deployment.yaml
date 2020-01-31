@@ -157,7 +157,7 @@ spec:
               value: "/ssl/server/cert.pem"
             - name: RABBITMQ_SSL_KEY_FILE
               value: "/ssl/server/key.pem"
-          image: culibraries/api-k8s:0.0.5
+          image: culibraries/api-k8s:0.0.7
           name: cybercom-api
           ports:
             - containerPort: 8080

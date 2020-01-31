@@ -11,8 +11,6 @@ spec:
   resources:
     requests:
       storage: 10Gi
-  storageClassName: aws-cybercom
-  volumeMode: Filesystem
-  #add VolumeName cc-mongo-test
-  volumeName: test-cybercom-mongo
+  storageClassName: aws-sclass
+
 status: {}
