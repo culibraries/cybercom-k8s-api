@@ -205,7 +205,7 @@ DATABASES = {
     },
     'counter': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'counter',
+        'NAME': os.getenv('COUNTER_DB'),
         'HOST': os.getenv('DEFAULT_DB_HOST'),
         'USER': os.getenv('DEFAULT_DB_USER'),
         'PASSWORD': os.getenv('DEFAULT_DB_PASSWORD'),
