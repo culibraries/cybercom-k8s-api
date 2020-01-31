@@ -60,13 +60,14 @@ SECRET_KEY = os.getenv('DJANGO_SECRET_KEY',
 DEBUG = True if os.getenv('API_DEBUG') == 'True' else False
 
 ALLOWED_HOSTS = [
+    'libapps.colorado.edu',
     'test-libapps.colorado.edu',
     'cubl-load-balancer-103317816.us-west-2.elb.amazonaws.com'
 ]
 CORS_ORIGIN_WHITELIST = (
-    'libapps.colorado.edu',
-    'test-libapps.colorado.edu',
-    'cubl-load-balancer-103317816.us-west-2.elb.amazonaws.com',
+    'https://libapps.colorado.edu',
+    'https://test-libapps.colorado.edu',
+    'https://cubl-load-balancer-103317816.us-west-2.elb.amazonaws.com',
     'http://localhost:4200',
 )
 
@@ -105,6 +106,7 @@ INSTALLED_APPS = [
     'cybercom_queue',
     'counter',
     's3',
+    's3-logging'
 ]
 
 MIDDLEWARE = [
@@ -203,7 +205,7 @@ DATABASES = {
     },
     'counter': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'counter',
+        'NAME': os.getenv('COUNTER_DB'),
         'HOST': os.getenv('DEFAULT_DB_HOST'),
         'USER': os.getenv('DEFAULT_DB_USER'),
         'PASSWORD': os.getenv('DEFAULT_DB_PASSWORD'),

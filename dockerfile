@@ -11,12 +11,12 @@ RUN apk add mariadb-dev \
     libxml2-dev \
     libxslt-dev \
     xmlsec-dev \
-    git
+    git \
+    tzdata
+RUN cp /usr/share/zoneinfo/America/Denver /etc/localtime
 # App requirements
 RUN pip install --no-cache-dir -r requirements.txt
 RUN rm requirements.txt
-
-
 COPY . /app
 WORKDIR /app
 

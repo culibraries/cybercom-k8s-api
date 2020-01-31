@@ -1,12 +1,42 @@
 {% extends "rest_framework/base.html" %}
 {% load static %}
+{% load i18n %}
+{% load rest_framework %}
 
 {% block title %}{% if name %}{{ name }} – {% endif %}{{ my_settings.APPLICATION_TITLE }}{% endblock %}
 
-{% block branding %}
-<a class='navbar-brand' rel=" nofollow" href='/'> {{ my_settings.APPLICATION_TITLE }} <span class="version"
-                style="margin-left:5px"> {{ my_settings.API_VERSION }} </span></a>
+{% block navbar %}
+<div class="navbar navbar-static-top {% block bootstrap_navbar_variant %}navbar-inverse{% endblock %}" role="navigation"
+        aria-label="{% trans "navbar" %}">
+        <div class="container">
+                <span>
+                        {% block branding %}
+                        <a class='navbar-brand' rel=" nofollow" href='/api'> {{ my_settings.APPLICATION_TITLE }} <span
+                                        class="version" style="margin-left:5px"> {{ my_settings.API_VERSION }}
+                                </span></a>
+                        {% endblock %}
+
+                </span>
+                <ul class="nav navbar-nav pull-right">
+                        {% block userlinks %}
+                        {% if user.is_authenticated %}
+                        {% optional_logout request user %}
+                        {% else %}
+                        <li>
+                                <a href="/api/api-saml/sso/saml">CU Boulder Login</a>
+                        </li>
+                        {% optional_login request %}
+                        {% endif %}
+                        {% endblock %}
+                </ul>
+        </div>
+</div>
 {% endblock %}
+
+<!-- { % block branding % }
+<a class='navbar-brand' rel=" nofollow" href='/'> { { my_settings.APPLICATION_TITLE }  } <span class="version"
+                style="margin-left:5px"> { { my_settings.API_VERSION } } </span></a>
+{ % endblock % } -->
 
 
 {% block script %}
