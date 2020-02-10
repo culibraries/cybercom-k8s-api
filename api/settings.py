@@ -288,7 +288,7 @@ SAML_PROVIDERS = [{
         "debug": False,
         "custom_base_path": "",
         "sp": {
-            "entityId": "{0}/api/api-saml/sso/saml/metadata".format(os.getenv('SAML_HOST_BASE_URL')),
+            "entityId": "{0}".format(os.getenv('SAML_ENTITY_ID')),
             "assertionConsumerService": {
                 "url": "{0}/api/api-saml/sso/saml/?acs".format(os.getenv('SAML_HOST_BASE_URL')),
                 "binding": "urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST"
