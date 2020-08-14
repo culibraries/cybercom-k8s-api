@@ -106,7 +106,8 @@ INSTALLED_APPS = [
     'cybercom_queue',
     'counter',
     's3',
-    's3-logging'
+    's3-logging',
+    'ark-server'
 ]
 
 MIDDLEWARE = [

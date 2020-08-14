@@ -12,3 +12,6 @@
 [submodule "s3-logging"]
 	path = s3-logging
 	url = git@github.com:culibraries/s3-logging-django-app.git
+[submodule "ark-server"]
+	path = ark-server
+	url = git@github.com:culibraries/ark-django-app.git
