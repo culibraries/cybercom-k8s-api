@@ -48,7 +48,7 @@ urlpatterns = [
     path('api/room-booking/', include('room_booking.urls'),
          name='room-booking-list'),
     path('api/s3-logging/', include('s3-logging.urls'), name='s3-logging-list'),
-    path('api/ark:/', include('ark-server.urls'), name='ark-server')
+    path('ark:/', include('ark-server.urls'), name='ark-server')
 
 ]
 
