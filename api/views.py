@@ -52,6 +52,7 @@ class APIRoot(APIView):
                                   reverse('objects-list', request=request),
                                   reverse('object-upload', request=request)]},
             'User Profile': {'User': reverse('user-list', request=request)},
+            'Ark Server': reverse('ark-list', request=request),
         })
 
 
