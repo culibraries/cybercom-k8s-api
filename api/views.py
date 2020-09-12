@@ -14,7 +14,13 @@ from hashlib import md5
 
 # logout request
 import requests
+import os
+import json
 from django.contrib.auth import logout
+
+from rest_framework.parsers import FileUploadParser, MultiPartParser
+from rest_framework.renderers import JSONRenderer
+
 
 # from rest_framework import viewsets
 # from rest_framework.permissions import AllowAny
@@ -154,3 +160,73 @@ class IsOwnerOrReadOnly(permissions.BasePermission):
 
         # Write permissions are only allowed to the owner of the snippet.
         return obj.owner == request.user
+
+
+class fileDataUploadView(APIView):
+    permission_classes = (IsAuthenticated,)
+    #parser_classes = (MultiPartParser, FormParser,FileUploadParser,)
+    parser_classes = (MultiPartParser, FileUploadParser,)
+    renderer_classes = (JSONRenderer,)
+
+    def post(self, request, uploadDirectory="/data/file_upload", format=None):
+        # check if uploadDirectory exists
+        if not os.path.isdir(uploadDirectory):
+            os.makedirs(uploadDirectory)
+        results = []
+        # upload files submitted
+
+        print(request.data)
+        file_obj = request.data['file']
+        print(dir(file_obj))
+        filename = file_obj.name
+        local_file = "{0}/{1}".format(uploadDirectory, filename)
+        self.handle_file_upload(request.data['file'], local_file)
+        result = {}
+        if request.data.get("callback", None):
+            req = self.callback_task(request, local_file)
+            try:
+                result['callback'] = {
+                    "status": req.status_code, "response": req.json()}
+            except:
+                result['callback'] = {
+                    "status": req.status_code, "response": req.text}
+        results.append(result)
+        # # print(request.data['file'])
+        # print(dir(request.data['file']))
+        # # print(request.data['filename'].name)
+        # for key, value in request.data['file'][0].iteritems():
+        #     result = {}
+        #     filename = value.name
+        #     local_file = "{0}/{1}".format(uploadDirectory, filename)
+        #     self.handle_file_upload(request.FILES[key], local_file)
+        #     result[key] = local_file
+
+        return Response(results)
+
+    def handle_file_upload(self, f, filename):
+        if f.multiple_chunks():
+            with open(filename, 'wb+') as temp_file:
+                for chunk in f.chunks():
+                    temp_file.write(chunk)
+        else:
+            with open(filename, 'wb+') as temp_file:
+                temp_file.write(f.read())
+
+    def callback_task(self, request, local_file):
+        # Get Token for task submission
+        tok = Token.objects.get_or_create(user=request.user)
+        headers = {'Authorization': 'Token {0}'.format(
+            str(tok[0])), 'Content-Type': 'application/json'}
+        queue = request.data.get("queue", "celery")
+        # tags is a comma separated string; Converted to list
+        tags = request.data.get("tags", '')
+        tags = tags.split(',')
+        taskname = request.data.get("callback")
+        data = request.data
+        del data['file']
+        payload = {"function": taskname, "queue": queue, "args": [
+            local_file, data], "kwargs": {}, "tags": tags}
+        components = request.build_absolute_uri('/api/')  # .split('/')
+        #hostname = os.environ.get("api_hostname", components[2])
+        url = "{0}queue/run/{1}.json".format(components, taskname)
+        return requests.post(url, data=json.dumps(payload), headers=headers)

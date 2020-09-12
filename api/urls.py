@@ -2,7 +2,7 @@ from django.urls import include, path, re_path
 from rest_framework import routers
 #from tutorial import views
 from django.contrib import admin
-from .views import APIRoot, UserProfile, samlLogout
+from .views import APIRoot, UserProfile, samlLogout, fileDataUploadView
 from django.utils.translation import ugettext_lazy as _
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from rest_framework.urlpatterns import format_suffix_patterns
@@ -48,7 +48,8 @@ urlpatterns = [
     path('api/room-booking/', include('room_booking.urls'),
          name='room-booking-list'),
     path('api/s3-logging/', include('s3-logging.urls'), name='s3-logging-list'),
-    path('ark:/', include('ark-server.urls'), name='ark-server')
+    path('ark:/', include('ark-server.urls'), name='ark-server'),
+    re_path(r'^api/upload/', fileDataUploadView.as_view(), name='upload'),
 
 ]
 
