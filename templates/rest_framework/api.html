@@ -52,4 +52,10 @@
 </style>
 <script>"Run Task" === $(document).find("title").text().substring(0, 8) && ($(".response-info").hide(), setTimeout(function () { fdata = {}, elements = $(".str"), $.each(elements, function (t, e) { t % 2 == 0 && (count = 1, "task_url" == e.innerText.replace(/"/g, "") && (count = 2), fdata[e.innerText.replace(/"/g, "")] = elements[t + count].innerText.replace(/"/g, "")) }), "task_url" in fdata && (delete fdata[fdata.task_url], exampledata = { queue: "celery", args: [], kwargs: {}, tags: [] }, template = '<pre class="prettyprint"><div class="panel panel-default" style="margin:10px;"><table class="table table-bordered table-wrap"><tr><td style="width:120px;">Task Name</td><td><span class="table-min-height nocode lit">', template = template + fdata.task_name + '</span></td></tr><tr><td>Docstring</td><td><span class="nocode lit">', template = template + fdata.task_docstring + '</span></td></tr><tr><td>Curl Example</td><td><span class="nocode lit">curl -X POST --data ', template = template + "'" + JSON.stringify(exampledata) + "' " + fdata.task_url, template += " -H 'Content-Type:application/json' -H 'Authorization: Token ", template = template + fdata.auth_token + "' </span></td></tr></table></div></pre>", $(".response-info").empty(), $(".response-info").html(template), $("#id__content").text(JSON.stringify(exampledata, null, 4))), $(".response-info").show() }, 300));</script>
 <!--End Cybercommons Block-->
+<script>
+        if ($(document).find("title").text().substring(0, 10) === "Ark Server") {
+                exampledata = { "resolve_url": "", "metadata": { "mods": { "titleInfo": [{ "title": "" }], "typeOfResource": "", "identifier": "", "accessCondition": "" } } }
+                $("#id__content").text(JSON.stringify(exampledata, null, 4))
+        }
+</script>
 {% endblock %}

@@ -60,6 +60,8 @@ SECRET_KEY = os.getenv('DJANGO_SECRET_KEY',
 DEBUG = True if os.getenv('API_DEBUG') == 'True' else False
 
 ALLOWED_HOSTS = [
+    'test-ark.colorado.edu',
+    'ark.colorado.edu',
     'libapps.colorado.edu',
     'test-libapps.colorado.edu',
     'cubl-load-balancer-103317816.us-west-2.elb.amazonaws.com'
@@ -106,7 +108,8 @@ INSTALLED_APPS = [
     'cybercom_queue',
     'counter',
     's3',
-    's3-logging'
+    's3-logging',
+    'ark-server'
 ]
 
 MIDDLEWARE = [
