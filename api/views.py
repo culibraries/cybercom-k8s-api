@@ -47,7 +47,8 @@ class APIRoot(APIView):
         return Response({
             'Queue': {'Tasks': reverse('queue-main', request=request),
                       'Tasks History': reverse('queue-user-tasks', request=request)},
-            'Catalog': {'Data Source': reverse('catalog-list', request=request)},
+            'Catalog': {'Data Source': reverse('catalog-list', request=request),
+                        'Ark Server': reverse('ark-list', request=request)},
             'Data Store': {'Mongo': reverse('data-list', request=request),
                            'Counter': [reverse('platform-list', request=request),
                                        reverse('publication-list',
@@ -58,7 +59,7 @@ class APIRoot(APIView):
                                   reverse('objects-list', request=request),
                                   reverse('object-upload', request=request)]},
             'User Profile': {'User': reverse('user-list', request=request)},
-            'Ark Server': reverse('ark-list', request=request),
+
         })
 
 
