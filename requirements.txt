@@ -1,4 +1,12 @@
+<<<<<<< HEAD
 celery==4.1.1
+=======
+amqp
+#==2.4.2
+#billiard==3.6.0.0
+#celery==4.3.0
+celery==4.4.7
+>>>>>>> ark
 defusedxml==0.5.0
 Django==2.2.9
 django-filter==2.1.0
@@ -8,6 +16,10 @@ djangorestframework-jsonp==1.0.2
 djangorestframework-simplejwt==4.3.0
 djangorestframework-xml==1.4.0
 djangorestframework-yaml==1.0.3
+<<<<<<< HEAD
+=======
+#kombu==4.5.0
+>>>>>>> ark
 PyJWT==1.7.1
 pymongo==3.7.2
 python-memcached==1.59
@@ -20,3 +32,7 @@ django-cors-headers
 git+https://github.com/culibraries/django-saml2-pro-auth.git
 boto3
 requests
+<<<<<<< HEAD
+=======
+arkpy
+>>>>>>> ark

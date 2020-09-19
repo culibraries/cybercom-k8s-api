@@ -17,6 +17,8 @@ RUN cp /usr/share/zoneinfo/America/Denver /etc/localtime
 # App requirements
 RUN pip install --no-cache-dir -r requirements.txt
 RUN rm requirements.txt
+RUN mkdir -p /data/file_upload
+RUN chmod -R 777 /data/file_upload
 COPY . /app
 WORKDIR /app
 

@@ -1,12 +1,14 @@
 __author__ = 'mstacy'
-from rest_framework.renderers import BrowsableAPIRenderer, JSONRenderer #, #JSONPRenderer
+from rest_framework.renderers import BrowsableAPIRenderer, JSONRenderer  # , #JSONPRenderer
 from api.encoder import JSONEncoder
+
 
 class DataBrowsableAPIRenderer(BrowsableAPIRenderer):
     # template = 'rest_framework/queue_run_api.html'
     def get_context(self, data, accepted_media_type, renderer_context):
-        context = super(DataBrowsableAPIRenderer, self).get_context(data, accepted_media_type, renderer_context)
-        #if context['request'].method.upper() == 'GET':
+        context = super(DataBrowsableAPIRenderer, self).get_context(
+            data, accepted_media_type, renderer_context)
+        # if context['request'].method.upper() == 'GET':
         #    context['content']=data
         temp = []
         i = 0
@@ -41,7 +43,7 @@ class mongoJSONPRenderer(mongoJSONRenderer):
         Determine the name of the callback to wrap around the json output.
         """
         request = renderer_context.get('request', None)
-        params = request and request.QUERY_PARAMS or {}
+        params = request and request.query_params or {}
         return params.get(self.callback_parameter, self.default_callback)
 
     def render(self, data, accepted_media_type=None, renderer_context=None):
@@ -54,12 +56,10 @@ class mongoJSONPRenderer(mongoJSONRenderer):
         renderer_context = renderer_context or {}
         callback = self.get_callback(renderer_context)
         json = super(mongoJSONPRenderer, self).render(data, accepted_media_type,
-                                                 renderer_context)
+                                                      renderer_context)
         return callback.encode(self.charset) + b'(' + json + b');'
 
 
-
-
-#class mongoJSONPRenderer(JSONPRenderer):
+# class mongoJSONPRenderer(JSONPRenderer):
 
  #   encoder_class = JSONPRenderer
