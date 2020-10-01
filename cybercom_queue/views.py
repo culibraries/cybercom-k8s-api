@@ -20,17 +20,18 @@ from django.shortcuts import redirect
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.auth.models import Permission
 from rest_framework.renderers import TemplateHTMLRenderer
-#Local Imports
+# Local Imports
 from .permission import cybercomTaskPermission
-from .celery_queue import QueueTask 
+from .celery_queue import QueueTask
 import os
+
 
 class Queue(APIView):
 
     permission_classes = (IsAuthenticatedOrReadOnly,)
 
     def __init__(self, *args, **kwargs):
-        self.q = QueueTask() 
+        self.q = QueueTask()
         self.task_list = None
         super(Queue, self).__init__(*args, **kwargs)
 
@@ -63,23 +64,25 @@ class Queue(APIView):
             if not self.task_list:
                 self.task_list.append(
                     "ERROR: Celery Workflow Tasks are currently loading or Celery Worker is down. Please check back or contact System Administrator.")
-        data={
+        data = {
             'Tasks': self.task_list,
             'Task History': reverse('queue-user-tasks', request=request),
             'Task Queues': self.queues,
         }
         if request.user.is_superuser:
-            data['Admin Tasks']= {"Clear Memcache":reverse('flush-memcache',request=request)}
+            data['Admin Tasks'] = {"Clear Memcache": reverse(
+                'flush-memcache', request=request)}
         return Response(data)
 
 
 class flushMemcache(APIView):
     permission_classes = (IsAdminUser,)
+
     def __init__(self, *args, **kwargs):
-        self.q = QueueTask() 
-        
+        self.q = QueueTask()
+
     def get(self, request, format=None):
-        qtlists=self.q.reset_tasklist()
+        qtlists = self.q.reset_tasklist()
         return Response({
             'Memcache': 'Cleared',
             'Return': reverse('queue-main', request=request),
@@ -89,8 +92,8 @@ class flushMemcache(APIView):
 class Run(APIView):
     permission_classes = (cybercomTaskPermission,)
     model = taskModel
-    parser_classes = (JSONParser,) 
-    name="Run Task"
+    parser_classes = (JSONParser,)
+    name = "Run Task"
 
     def __init__(self,  *args, **kwargs):
         self.q = QueueTask()
@@ -116,7 +119,7 @@ class Run(APIView):
         else:
             auth_token = "< authorized-token > "
         data = {'task_name': task_name, 'task_docstring': docstring,
-                'queue': 'celery', 'auth_token': auth_token,'task_url': curl_url}
+                'queue': 'celery', 'auth_token': auth_token, 'task_url': curl_url}
         return Response(data)
 
     def post(self, request, task_name=None, format=None):
@@ -155,7 +158,8 @@ class UserResult(APIView):
             try:
                 data = self.q.task(task_id)
             except Exception as inst:
-                data = {'task_id': task_id, 'error': str(inst)}
+                data = {'task_id': task_id,
+                        'status': "PENDING", 'error': str(inst)}
             return Response(data)
 
 
