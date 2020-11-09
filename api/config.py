@@ -50,6 +50,7 @@ DATA_STORE_EXCLUDE = ['admin','config','local','default_collection',MONGO_DB,'ca
 DATA_STORE_MONGO_URI = MONGO_URI
 DATA_STORE_ANONYMOUS = True
 
+SAFE_METHOD_PERM_REQUIRED= os.environ.get('SAFE_METHOD_PERM_REQUIRED','').split(',')
 
 # *********** Email Configuration ********************
 # Uncomment and configure to enable send email
