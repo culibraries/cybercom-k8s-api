@@ -16,7 +16,9 @@ class cybercomTaskPermission(permissions.BasePermission):
         else:
             django_app = 'cybercom_queue'
             admin_perm = 'cybercom_queue.task_admin'
-            task_name = request.data.get('function', None)
+            task_name = view.kwargs['task_name']
+            if not task_name:
+                task_name = request.data.get('function', 'error')
             code_perm= "{0}.{1}".format(django_app,task_name.replace('.','_'))
             perms=list(request.user.get_all_permissions())
             if request.user.is_superuser or admin_perm in perms or code_perm in perms:
