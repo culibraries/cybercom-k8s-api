@@ -11,7 +11,7 @@ from rest_framework.permissions import IsAuthenticated
 # from .models import AuthtokenToken, AuthUser
 from django.contrib.auth.decorators import login_required
 from hashlib import md5
-
+from django.contrib.auth.models import Group
 # logout request
 import requests
 import os
@@ -21,7 +21,7 @@ from django.contrib.auth import logout
 from rest_framework.parsers import FileUploadParser, MultiPartParser
 from rest_framework.renderers import JSONRenderer
 
-
+default_user_group = os.getenv('DEFAULT_USER_GROUP','cubl-default-login')
 # from rest_framework import viewsets
 # from rest_framework.permissions import AllowAny
 # from .permissions import IsStaffOrTargetUser
@@ -96,6 +96,10 @@ class UserProfile(APIView):
         user_groups = []
         for g in request.user.groups.all():
             user_groups.append(g.name)
+        if default_user_group not in user_groups:
+            my_group = Group.objects.get(name=default_user_group) 
+            my_group.user_set.add(request.user)
+            user_groups.append(default_user_group)
         # Additional groups from grouper
         if 'samlUserdata' in request.session:
             samlUserdata = request.session['samlUserdata']
