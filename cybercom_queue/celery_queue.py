@@ -162,7 +162,7 @@ class QueueTask():
                 pass
         return result
 
-    def reset_tasklist(self, user=None):
+    def reset_tasklist(self, user="guest"):
         """ 
         Delete and reload memcached record of available tasks, useful for development
         when tasks are being frequently reloaded.
@@ -282,7 +282,7 @@ class QueueTask():
                 for item in self.i.registered().values():
                     REGISTERED_TASKS.update(item)
                 AVAILABLE_QUEUES = set([item[0]["exchange"]["name"]
-                                        for item in i.active_queues().values()])
+                                        for item in self.i.active_queues().values()])
         except:
             REGISTERED_TASKS = set()
             AVAILABLE_QUEUES = set()
