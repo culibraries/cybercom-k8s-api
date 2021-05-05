@@ -108,7 +108,7 @@ class UserProfile(APIView):
             if "urn:oid:1.3.6.1.4.1.632.11.2.200" in samlUserdata:
                 grouper = samlUserdata['urn:oid:1.3.6.1.4.1.632.11.2.200']
                 user_groups = list(set(user_groups+grouper))
-            if "1.3.6.1.4.1.632.11.1.15" in samlUserdata:
+            if "urn:oid:1.3.6.1.4.1.632.11.1.15" in samlUserdata:
                 user_department= samlUserdata["1.3.6.1.4.1.632.11.1.15"]
         user_groups.sort()
         rdata = serializer.data
