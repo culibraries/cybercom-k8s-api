@@ -59,13 +59,8 @@ SECRET_KEY = os.getenv('DJANGO_SECRET_KEY',
 # Default to False unless API_DEBUG is True
 DEBUG = True if os.getenv('API_DEBUG') == 'True' else False
 
-ALLOWED_HOSTS = [
-    'test-ark.colorado.edu',
-    'ark.colorado.edu',
-    'libapps.colorado.edu',
-    'test-libapps.colorado.edu',
-    'cubl-load-balancer-103317816.us-west-2.elb.amazonaws.com'
-]
+ALLOWED_HOSTS = ['.colorado.edu']
+
 CORS_ORIGIN_WHITELIST = (
     'https://libapps.colorado.edu',
     'https://test-libapps.colorado.edu',
@@ -153,8 +148,6 @@ WSGI_APPLICATION = 'api.wsgi.application'
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
-        # 'rest_framework.authentication.BasicAuthentication',
-        # 'rest_framework_simplejwt.authentication.JWTAuthentication',
         'rest_framework.authentication.TokenAuthentication',
         'rest_framework.authentication.SessionAuthentication',
     ),
@@ -162,29 +155,6 @@ REST_FRAMEWORK = {
     'PAGINATE_BY': 50,
     'PAGINATE_BY_PARAM': 'page_size',
     'MAX_PAGINATE_BY': 1000000
-}
-
-# Customize JWT
-SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=5),
-    'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
-    'ROTATE_REFRESH_TOKENS': False,
-    'BLACKLIST_AFTER_ROTATION': True,
-
-    'ALGORITHM': 'HS256',
-    'SIGNING_KEY': SECRET_KEY,
-    'VERIFYING_KEY': None,
-
-    'AUTH_HEADER_TYPES': ('Bearer',),
-    'USER_ID_FIELD': 'username',
-    'USER_ID_CLAIM': 'username',
-
-    'AUTH_TOKEN_CLASSES': ('rest_framework_simplejwt.tokens.AccessToken',),
-    'TOKEN_TYPE_CLAIM': 'token_type',
-
-    'SLIDING_TOKEN_REFRESH_EXP_CLAIM': 'refresh_exp',
-    'SLIDING_TOKEN_LIFETIME': timedelta(minutes=5),
-    'SLIDING_TOKEN_REFRESH_LIFETIME': timedelta(days=1),
 }
 
 # Database
