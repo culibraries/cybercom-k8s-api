@@ -136,8 +136,11 @@ class Run(APIView):
         if type(kwargs) is not dict:
             return Response({'error': 'kwargs must be a JSON object'})
         tags = request.data.get('tags', [])
+        user_info = request.user.__class__.objects.filter(pk=request.user.id).values().first()
+        user_info.pop('password', None)
+        #self.get_username(request)
         result = self.q.run(task_name, args, kwargs, queue,
-                            self.get_username(request), tags)
+                            user_info, tags)
         result['result_url'] = reverse(
             'queue-task-result', kwargs={'task_id': result['task_id']}, request=request)
         return Response(result)
