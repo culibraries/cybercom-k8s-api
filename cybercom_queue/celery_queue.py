@@ -47,19 +47,19 @@ class QueueTask():
         celery.Celery().config_from_object(celeryConfig)
         self.i = inspect()
         
-    def run(self, task, task_args, task_kwargs, task_queue, user, tags):
+    def run(self, task, task_args, task_kwargs, task_queue, user_info, tags):
         """ 
         Submit task to celerey async tasks
         """
         # print(celeryConfig)
         #app = Celery().config_from_object(celeryConfig)
-
+        print(user_info)
         # Submit task
         task_obj = celery.current_app.send_task(
-            task, args=task_args, kwargs=task_kwargs, queue=task_queue, track_started=True)
+            task, args=task_args, kwargs=task_kwargs, queue=task_queue, track_started=True,headers={"authenticated_user":user_info})
         task_log = {
             'task_id': task_obj.task_id,
-            'user': user,
+            'user': user_info['username'],
             'task_name': task,
             'args': task_args,
             'kwargs': task_kwargs,
