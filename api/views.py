@@ -5,11 +5,12 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.reverse import reverse
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
-from rest_framework import serializers, generics
+from rest_framework import serializers
+# generics
 from rest_framework.authtoken.models import Token
 from rest_framework.permissions import IsAuthenticated
 # from .models import AuthtokenToken, AuthUser
-from django.contrib.auth.decorators import login_required
+# from django.contrib.auth.decorators import login_required
 from hashlib import md5
 from django.contrib.auth.models import Group
 # logout request
@@ -20,8 +21,13 @@ from django.contrib.auth import logout
 
 from rest_framework.parsers import FileUploadParser, MultiPartParser
 from rest_framework.renderers import JSONRenderer
+from api import config
+from pymongo import MongoClient
+from data_store.mongo_paginator import MongoDataPagination
 
-default_user_group = os.getenv('DEFAULT_USER_GROUP','cubl-default-login')
+default_user_group = os.getenv('DEFAULT_USER_GROUP', 'cubl-default-login')
+security_grouper_collection = os.getenv('SECURITY_GROUPER_COLLECTION',
+                                        'application_grouper')
 # from rest_framework import viewsets
 # from rest_framework.permissions import AllowAny
 # from .permissions import IsStaffOrTargetUser
@@ -38,29 +44,32 @@ class APIRoot(APIView):
     permission_classes = (IsAuthenticatedOrReadOnly,)
 
     def get(self, request, format=None):
-        print('debug')
-        try:
-            print(request.session['samlUserdata'])
-        except:
-            print('error')
-
-        return Response({
-            'Queue': {'Tasks': reverse('queue-main', request=request),
-                      'Tasks History': reverse('queue-user-tasks', request=request)},
-            'Catalog': {'Data Source': reverse('catalog-list', request=request),
-                        'Ark Server': reverse('ark-list', request=request)},
-            'Data Store': {'Mongo': reverse('data-list', request=request),
-                           'Counter': [reverse('platform-list', request=request),
-                                       reverse('publication-list',
-                                               request=request),
-                                       reverse('filter-list', request=request),
-                                       reverse('title-list', request=request)],
-                           'S3': [reverse('buckets-list', request=request),
-                                  reverse('objects-list', request=request),
-                                  reverse('object-upload', request=request)]},
-            'User Profile': {'User': reverse('user-list', request=request)},
-
-        })
+        # print('debug')
+        # try:
+        #     print(request.session['samlUserdata'])
+        # except:
+        #     print('error')
+        data={
+            'Queue': {
+                'Tasks': reverse('queue-main', request=request),
+                'Tasks History': reverse('queue-user-tasks', request=request)
+            },
+            'Catalog': {
+                'Data Source': reverse('catalog-list', request=request),
+                'Ark Server': reverse('ark-list', request=request)
+            },
+            'Data Store': {
+                'Mongo': reverse('data-list', request=request),
+                'Counter': [ reverse('platform-list', request=request),
+                            reverse('publication-list',request=request),
+                            reverse('filter-list', request=request),
+                            reverse('title-list', request=request)],
+                'S3': [ reverse('buckets-list', request=request),
+                        reverse('objects-list', request=request),
+                        reverse('object-upload', request=request)]
+            },
+            'User Profile': {'User': reverse('user-list', request=request)}        }
+        return Response(data)
 
 
 class UserSerializer(serializers.Serializer):
@@ -83,8 +92,45 @@ class samlLogout(APIView):
         logout(request)
 
 
+class appGroupPermissions(permissions.BasePermission):
+    """
+        This permission is included for application that require a specific Group.
+        Process:
+        1. NO app parameter set in url(?app=libbudget) ==> action allowed
+        2. No group set within MongoDB for app parameter(?app=libbudget) ==> action allowed
+        3. Group set in MongoDB collection that match user group ==> action allowed
+        4. Group set in MongoDB collection that does not match users grouper groups ==> action denied
+
+        Security MongoDB collection: default 'application_grouper' 
+          Environmental Variable: SECURITY_GROUPER_COLLECTION
+    """
+
+    def has_permission(self, request, view):
+        application = request.query_params.get('app')
+        connect_uri = config.DATA_STORE_MONGO_URI
+        db = MongoClient(host=connect_uri)
+        query={"filter":{"application":application}}
+        app_required_group = MongoDataPagination(db,'catalog',security_grouper_collection,query=json.dumps(query),nPerPage=0)
+        #print("app_required_group: ", app_required_group['results'])
+        if application is not None:
+            user_groups = []
+            for g in request.user.groups.all():
+                user_groups.append(g.name)
+            if 'samlUserdata' in request.session:
+                samlUserdata = request.session['samlUserdata']
+                if "urn:oid:1.3.6.1.4.1.632.11.2.200" in samlUserdata:
+                    grouper = samlUserdata['urn:oid:1.3.6.1.4.1.632.11.2.200']
+                    user_groups = list(set(user_groups+grouper))
+            for app in app_required_group['results']:
+                if app['group'] not in user_groups:
+                    return False
+            return True
+        else:
+            return True
+
+
 class UserProfile(APIView):
-    permission_classes = (IsAuthenticated,)
+    permission_classes = (IsAuthenticated, appGroupPermissions,)
     serializer_class = UserSerializer
     fields = ('username', 'first_name', 'last_name', 'email')
     model = User
@@ -98,13 +144,13 @@ class UserProfile(APIView):
         for g in request.user.groups.all():
             user_groups.append(g.name)
         if default_user_group not in user_groups:
-            my_group = Group.objects.get(name=default_user_group) 
+            my_group = Group.objects.get(name=default_user_group)
             my_group.user_set.add(request.user)
             user_groups.append(default_user_group)
         # Additional groups from grouper
         if 'samlUserdata' in request.session:
             samlUserdata = request.session['samlUserdata']
-            print(samlUserdata)
+            #print(samlUserdata)
             if "urn:oid:1.3.6.1.4.1.632.11.2.200" in samlUserdata:
                 grouper = samlUserdata['urn:oid:1.3.6.1.4.1.632.11.2.200']
                 user_groups = list(set(user_groups+grouper))
@@ -173,7 +219,7 @@ class IsOwnerOrReadOnly(permissions.BasePermission):
 
 class fileDataUploadView(APIView):
     permission_classes = (IsAuthenticated,)
-    #parser_classes = (MultiPartParser, FormParser,FileUploadParser,)
+    # parser_classes = (MultiPartParser, FormParser, FileUploadParser,)
     parser_classes = (MultiPartParser, FileUploadParser,)
     renderer_classes = (JSONRenderer,)
 
@@ -184,9 +230,9 @@ class fileDataUploadView(APIView):
         results = []
         # upload files submitted
 
-        print(request.data)
+        # print( request.data )
         file_obj = request.data['file']
-        print(dir(file_obj))
+        #print(dir(file_obj))
         filename = file_obj.name
         local_file = "{0}/{1}".format(uploadDirectory, filename)
         self.handle_file_upload(request.data['file'], local_file)
@@ -200,15 +246,6 @@ class fileDataUploadView(APIView):
                 result['callback'] = {
                     "status": req.status_code, "response": req.text}
         results.append(result)
-        # # print(request.data['file'])
-        # print(dir(request.data['file']))
-        # # print(request.data['filename'].name)
-        # for key, value in request.data['file'][0].iteritems():
-        #     result = {}
-        #     filename = value.name
-        #     local_file = "{0}/{1}".format(uploadDirectory, filename)
-        #     self.handle_file_upload(request.FILES[key], local_file)
-        #     result[key] = local_file
 
         return Response(results)
 
