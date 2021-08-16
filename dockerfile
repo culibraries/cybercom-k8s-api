@@ -16,6 +16,7 @@ RUN apk add mariadb-dev \
 RUN cp /usr/share/zoneinfo/America/Denver /etc/localtime
 # App requirements
 RUN pip install --no-cache-dir -r requirements.txt
+RUN pip install python3-saml==1.11
 RUN rm requirements.txt
 RUN mkdir -p /data/file_upload
 RUN chmod -R 777 /data/file_upload
