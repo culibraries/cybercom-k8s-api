@@ -1,4 +1,5 @@
-FROM python:3.6-alpine3.9
+#FROM python:3.6-alpine3.9
+FROM python:3.8-alpine
 
 ENV LANG=C.UTF-8 LC_ALL=C.UTF-8 PYTHONUNBUFFERED=1
 
@@ -14,6 +15,11 @@ RUN apk add mariadb-dev \
     git \
     tzdata
 RUN cp /usr/share/zoneinfo/America/Denver /etc/localtime
+
+# numpy and pandas build requirements 
+RUN apk --no-cache add musl-dev linux-headers g++
+RUN pip install --upgrade pip
+
 # App requirements
 RUN pip install --no-cache-dir -r requirements.txt
 RUN pip install python3-saml==1.11
