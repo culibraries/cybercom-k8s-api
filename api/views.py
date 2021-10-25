@@ -127,6 +127,29 @@ class appGroupPermissions(permissions.BasePermission):
         else:
             return True
 
+class UserGroups():
+    def __init__(self,request):
+        request=request
+    
+    def groups(self):
+        user_groups = []
+        for g in self.request.user.groups.all():
+            user_groups.append(g.name)
+        if default_user_group not in user_groups:
+            my_group = Group.objects.get(name=default_user_group)
+            my_group.user_set.add(request.user)
+            user_groups.append(default_user_group)
+            if 'samlUserdata' in self.request.session:
+                samlUserdata = self.request.session['samlUserdata']
+            #print(samlUserdata)
+            if "urn:oid:1.3.6.1.4.1.632.11.2.200" in samlUserdata:
+                grouper = samlUserdata['urn:oid:1.3.6.1.4.1.632.11.2.200']
+                user_groups = list(set(user_groups+grouper))
+            if "urn:oid:1.3.6.1.4.1.632.11.1.15" in samlUserdata:
+                user_department= samlUserdata["urn:oid:1.3.6.1.4.1.632.11.1.15"]
+        user_groups.sort()
+        return user_groups,user_department
+
 
 class UserProfile(APIView):
     permission_classes = (IsAuthenticated, appGroupPermissions,)
