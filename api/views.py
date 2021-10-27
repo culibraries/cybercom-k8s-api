@@ -28,27 +28,11 @@ from data_store.mongo_paginator import MongoDataPagination
 default_user_group = os.getenv('DEFAULT_USER_GROUP', 'cubl-default-login')
 security_grouper_collection = os.getenv('SECURITY_GROUPER_COLLECTION',
                                         'application_grouper')
-# from rest_framework import viewsets
-# from rest_framework.permissions import AllowAny
-# from .permissions import IsStaffOrTargetUser
-
-# Login required mixin
-""" class LoginRequiredMixin(object):
-    @classmethod
-    def as_view(cls, **initkwargs):
-        view = super(LoginRequiredMixin, cls).as_view(**initkwargs)
-        return login_required(view) """
-
 
 class APIRoot(APIView):
     permission_classes = (IsAuthenticatedOrReadOnly,)
 
     def get(self, request, format=None):
-        # print('debug')
-        # try:
-        #     print(request.session['samlUserdata'])
-        # except:
-        #     print('error')
         data={
             'Queue': {
                 'Tasks': reverse('queue-main', request=request),
@@ -110,16 +94,8 @@ class appGroupPermissions(permissions.BasePermission):
         db = MongoClient(host=connect_uri)
         query={"filter":{"application":application}}
         app_required_group = MongoDataPagination(db,'catalog',security_grouper_collection,query=json.dumps(query),nPerPage=0)
-        #print("app_required_group: ", app_required_group['results'])
         if application is not None:
-            user_groups = []
-            for g in request.user.groups.all():
-                user_groups.append(g.name)
-            if 'samlUserdata' in request.session:
-                samlUserdata = request.session['samlUserdata']
-                if "urn:oid:1.3.6.1.4.1.632.11.2.200" in samlUserdata:
-                    grouper = samlUserdata['urn:oid:1.3.6.1.4.1.632.11.2.200']
-                    user_groups = list(set(user_groups+grouper))
+            user_groups,user_department=UserGroups().groups(request)
             for app in app_required_group['results']:
                 if app['group'] not in user_groups:
                     return False
@@ -128,25 +104,24 @@ class appGroupPermissions(permissions.BasePermission):
             return True
 
 class UserGroups():
-    def __init__(self,request):
-        request=request
     
-    def groups(self):
+    def groups(self,request):
         user_groups = []
-        for g in self.request.user.groups.all():
+        user_department=''
+        for g in request.user.groups.all():
             user_groups.append(g.name)
         if default_user_group not in user_groups:
             my_group = Group.objects.get(name=default_user_group)
             my_group.user_set.add(request.user)
             user_groups.append(default_user_group)
-            if 'samlUserdata' in self.request.session:
-                samlUserdata = self.request.session['samlUserdata']
+        if 'samlUserdata' in request.session:
+            samlUserdata = request.session['samlUserdata']
             #print(samlUserdata)
-            if "urn:oid:1.3.6.1.4.1.632.11.2.200" in samlUserdata:
-                grouper = samlUserdata['urn:oid:1.3.6.1.4.1.632.11.2.200']
-                user_groups = list(set(user_groups+grouper))
-            if "urn:oid:1.3.6.1.4.1.632.11.1.15" in samlUserdata:
-                user_department= samlUserdata["urn:oid:1.3.6.1.4.1.632.11.1.15"]
+        if "urn:oid:1.3.6.1.4.1.632.11.2.200" in samlUserdata:
+            grouper = samlUserdata['urn:oid:1.3.6.1.4.1.632.11.2.200']
+            user_groups = list(set(user_groups+grouper))
+        if "urn:oid:1.3.6.1.4.1.632.11.1.15" in samlUserdata:
+            user_department= samlUserdata["urn:oid:1.3.6.1.4.1.632.11.1.15"]
         user_groups.sort()
         return user_groups,user_department
 
@@ -161,35 +136,14 @@ class UserProfile(APIView):
         data = User.objects.get(pk=self.request.user.id)
         serializer = self.serializer_class(data, context={'request': request})
         tok = Token.objects.get_or_create(user=self.request.user)
-        user_groups = []
-        user_department=[]
-        for g in request.user.groups.all():
-            user_groups.append(g.name)
-        if default_user_group not in user_groups:
-            my_group = Group.objects.get(name=default_user_group)
-            my_group.user_set.add(request.user)
-            user_groups.append(default_user_group)
-        # Additional groups from grouper
-        if 'samlUserdata' in request.session:
-            samlUserdata = request.session['samlUserdata']
-            #print(samlUserdata)
-            if "urn:oid:1.3.6.1.4.1.632.11.2.200" in samlUserdata:
-                grouper = samlUserdata['urn:oid:1.3.6.1.4.1.632.11.2.200']
-                user_groups = list(set(user_groups+grouper))
-            if "urn:oid:1.3.6.1.4.1.632.11.1.15" in samlUserdata:
-                user_department= samlUserdata["urn:oid:1.3.6.1.4.1.632.11.1.15"]
-        user_groups.sort()
+        user_groups,user_department=UserGroups().groups(request)
         rdata = serializer.data
         rdata['name'] = data.get_full_name()
         rdata['department']=user_department
         rdata['gravator_url'] = "{0}://www.gravatar.com/avatar/{1}".format(
             request.scheme, md5(rdata['email'].lower().strip(' \t\n\r').encode('utf-8')).hexdigest())
         rdata['groups'] = user_groups
-        authscheme = {'auth-token': str(tok[0]),
-                      #   'jwt-auth': {'obtain-token': reverse('token_obtain_pair', request=request),
-                      #                'refresh-token': reverse('token_refresh', request=request),
-                      #                'verify-token': reverse('token_verify', request=request)},
-                      }
+        authscheme = {'auth-token': str(tok[0])}
         rdata['authentication'] = authscheme
         return Response(rdata)
 
