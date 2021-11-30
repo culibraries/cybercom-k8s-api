@@ -48,8 +48,7 @@ class APIRoot(APIView):
                             reverse('filter-list', request=request),
                             reverse('title-list', request=request)],
                 'S3': [ reverse('buckets-list', request=request),
-                        reverse('objects-list', request=request),
-                        reverse('object-upload', request=request)]
+                        reverse('objects-list', request=request)]
             },
             'User Profile': {'User': reverse('user-list', request=request)}        }
         return Response(data)
