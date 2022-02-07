@@ -4,11 +4,33 @@ metadata:
   name: cybercom-mongo-job
 spec:
   template:
-    metadata:
-      creationTimestamp: null
     spec:
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+            - matchExpressions:
+              - key: failure-domain.beta.kubernetes.io/zone
+                operator: In
+                values:
+                - us-west-2a
       containers:
       - env:
+        - name: MONGO_ADMIN_USERNAME
+          valueFrom:
+            secretKeyRef:
+              key: MONGO_ADMIN_USERNAME
+              name: cybercom
+        - name: MONGO_ADMIN_ROLE
+          valueFrom:
+            secretKeyRef:
+              key: MONGO_ADMIN_ROLE
+              name: cybercom
+        - name: MONGO_ADMIN_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: MONGO_ADMIN_PASSWORD
+              name: cybercom
         - name: MONGO_DB
           valueFrom:
             secretKeyRef:
@@ -24,7 +46,7 @@ spec:
             secretKeyRef:
               key: MONGO_USERNAME
               name: cybercom
-        image: mongo
+        image: mongo:4.2.10
         name: cybercom-mongo-job
         command: ["/app/addmongouser"]
         volumeMounts:
