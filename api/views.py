@@ -102,6 +102,34 @@ class appGroupPermissions(permissions.BasePermission):
         else:
             return True
 
+
+class appAffiliationPermissions(permissions.BasePermission):
+    """
+        This permission is included for application that require a specific 
+        affiliation.
+    """
+
+    def has_permission(self, request, view):
+        # determine which application is requesting this permission check
+        application = request.query_params.get('app')
+
+        # only NYT Cooking application needs affiliation check
+        if application == "nytCooking":
+            app_required_affiliations = ['Student', 'Staff', 'Faculty']
+        else:
+            return True
+
+        # get user's affiliation
+        user_affiliations = UserAffiliations().affiliations(request)
+
+        if any(x in user_affiliations for x in app_required_affiliations):
+            hasPermission = True
+        else:
+            hasPermission = False
+
+        return hasPermission
+
+
 class UserGroups():
     
     def groups(self,request):
@@ -123,6 +151,18 @@ class UserGroups():
                 user_department= samlUserdata["urn:oid:1.3.6.1.4.1.632.11.1.15"]
         user_groups.sort()
         return user_groups,user_department
+
+
+class UserAffiliations():
+
+    def affiliations(self, request):
+        user_affiliations = []
+
+        if 'samlUserdata' in request.session:
+            samlUserdata = request.session['samlUserdata']
+            if "urn:oid:1.3.6.1.4.1.5923.1.1.1.1" in samlUserdata:
+                user_affiliations = samlUserdata["urn:oid:1.3.6.1.4.1.5923.1.1.1.1"]
+        return user_affiliations
 
 
 class UserProfile(APIView):
@@ -175,6 +215,27 @@ class UserProfile(APIView):
                 request.scheme, md5(data['email'].strip(' \t\n\r').encode('utf-8')).hexdigest())
             data['auth-token'] = str(tok[0])
             return Response(data)
+
+
+class UserAffiliationProfile(APIView):
+    permission_classes = (IsAuthenticated, appAffiliationPermissions,)
+    serializer_class = UserSerializer
+    fields = ('username', 'first_name', 'last_name', 'email')
+    model = User
+
+    def get(self, request, id=None, format=None):
+        data = User.objects.get(pk=self.request.user.id)
+        serializer = self.serializer_class(data, context={'request': request})
+
+        user_groups,user_department = UserGroups().groups(request)
+
+        rdata = serializer.data
+        rdata['name'] = data.get_full_name()
+        rdata['affiliations'] = UserAffiliations().affiliations(request)
+        rdata['department'] = user_department
+        rdata['groups'] = user_groups
+
+        return Response(rdata)
 
 
 class IsOwnerOrReadOnly(permissions.BasePermission):
