@@ -68,10 +68,12 @@ class samlLogout(APIView):
         """
         Logout of django and SAML post for CU Boulder Idp logout
         """
+        FEDAUTH_BASE_URL = os.getenv('FEDAUTH_HOST_BASE_URL', 'https://fedauth.colorado.edu/')
+
         requests.post(
-            "https://fedauth-test.colorado.edu/idp/profile/Logout/", data="_eventId=propagate")
+            "{0}/idp/profile/Logout/".format(FEDAUTH_BASE_URL), data="_eventId=propagate")
         requests.post(
-            "https://fedauth-test.colorado.edu/idp/profile/SAML2/Redirect/SLO")
+            "{0}/idp/profile/SAML2/Redirect/SLO".format(FEDAUTH_BASE_URL))
         logout(request)
 
 

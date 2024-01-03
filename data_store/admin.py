@@ -11,8 +11,9 @@ def setpermissions(app_label,codename,name):
         ct = ContentType.objects.get_for_model(dataStore)
         #ct=ContentType.objects.get(app_label=app_label)
         Permission.objects.get_or_create(codename=codename, name=name, content_type=ct)
-    except:
-         print("Unable to create {0} permission.".format(codename))
+    except Exception as error:
+        print("Unable to create {0} permission.".format(codename))
+        print("An exception occurred:", type(error).__name__, "-", error)
 
 #data Store Permissions
 db = MongoClient(host=config.DATA_STORE_MONGO_URI)

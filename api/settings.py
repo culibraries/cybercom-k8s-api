@@ -59,12 +59,13 @@ SECRET_KEY = os.getenv('DJANGO_SECRET_KEY',
 # Default to False unless API_DEBUG is True
 DEBUG = True if os.getenv('API_DEBUG') == 'True' else False
 
-ALLOWED_HOSTS = ['.colorado.edu']
+ALLOWED_HOSTS = ['.colorado.edu', '.cublcta.com']
 
 CORS_ORIGIN_WHITELIST = (
     'https://libapps.colorado.edu',
     'https://test-libapps.colorado.edu',
-    'https://cubl-load-balancer-103317816.us-west-2.elb.amazonaws.com'
+    'https://test-libapps.cublcta.com',
+    os.getenv('CORS_WHITELIST_LOAD_BALANCER')
 )
 
 # Logging
@@ -254,6 +255,9 @@ SAML_USERS_MAP = [{
 SAML_USERS_SYNC_ATTRIBUTES = True
 SAML_USERS_STRICT_MAPPING = False
 
+# Get the Federated Host URL set via secrets/env. variable or set it to the default CU one 
+FEDAUTH_HOST_BASE_URL = os.getenv('FEDAUTH_HOST_BASE_URL', 'https://fedauth.colorado.edu')
+
 SAML_PROVIDERS = [{
     "MyProvider": {
         "strict": True,
@@ -280,13 +284,13 @@ SAML_PROVIDERS = [{
             "privateKey": open(os.path.join(BASE_DIR, '/ssl/saml/sp-key.pem'), 'r').read()
         },
         "idp": {
-            "entityId": "https://fedauth.colorado.edu/idp/shibboleth",
+            "entityId": "{0}/idp/shibboleth".format(FEDAUTH_HOST_BASE_URL),
             "singleSignOnService": {
-                "url": "https://fedauth.colorado.edu/idp/profile/SAML2/Redirect/SSO",
+                "url": "{0}/idp/profile/SAML2/Redirect/SSO".format(FEDAUTH_HOST_BASE_URL),
                 "binding": "urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect"
             },
             "singleLogoutService": {
-                "url": "https://fedauth.colorado.edu/idp/profile/SAML2/Redirect/SLO",
+                "url": "{0}/idp/profile/SAML2/Redirect/SLO".format(FEDAUTH_HOST_BASE_URL),
                 "binding": "urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect"
             },
             "x509cert": open(os.path.join(BASE_DIR, '/ssl/saml/idp-cert.pem'), 'r').read(),
